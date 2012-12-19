@@ -1,4 +1,4 @@
-package mc.lhq.TeamSelecter;
+package mc.lhq.TeamSelector;
 
 import java.util.logging.Logger;
 
@@ -8,7 +8,7 @@ import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class TeamSelecter extends JavaPlugin{
+public class TeamSelector extends JavaPlugin{
 	
 	public final static Logger log =Logger.getLogger("Minecraft");
 	public Server server;

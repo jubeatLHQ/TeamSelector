@@ -1,4 +1,4 @@
-package mc.lhq.TeamSelecter;
+package mc.lhq.TeamSelector;
 
 import java.util.ArrayList;
 import java.util.List;

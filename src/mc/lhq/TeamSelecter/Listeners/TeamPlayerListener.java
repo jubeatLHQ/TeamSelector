@@ -1,7 +1,7 @@
 package mc.lhq.TeamSelecter.Listeners;
 
-import mc.lhq.TeamSelecter.PlayerData;
-import mc.lhq.TeamSelecter.Team;
+import mc.lhq.TeamSelector.PlayerData;
+import mc.lhq.TeamSelector.Team;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
