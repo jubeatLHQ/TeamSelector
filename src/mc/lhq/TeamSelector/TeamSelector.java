@@ -2,7 +2,7 @@ package mc.lhq.TeamSelector;
 
 import java.util.logging.Logger;
 
-import mc.lhq.TeamSelecter.Listeners.TeamPlayerListener;
+import mc.lhq.TeamSelector.Listeners.TeamPlayerListener;
 
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;

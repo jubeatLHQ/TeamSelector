@@ -1,4 +1,4 @@
-package mc.lhq.TeamSelecter.Listeners;
+package mc.lhq.TeamSelector.Listeners;
 
 import mc.lhq.TeamSelector.PlayerData;
 import mc.lhq.TeamSelector.Team;
