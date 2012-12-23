@@ -33,6 +33,17 @@ public class PlayerData {
 	public Team getTeam(){
 		return team;
 	}
+	public int getKd() {
+		if(killPoint!=0){
+			double killd = (double)killPoint;
+			double deathd = (double)deathPoint;
+			double killdeat = 0.0;
+			killdeat = (killd/(killd+deathd))*100.0;
+			return (int)killdeat;
+		}else{
+			return 0;
+		}
+	}
 	
 	public void setKillPoint(int value){
 		killPoint = value;

@@ -1,7 +1,11 @@
 package mc.lhq.TeamSelector.Listeners;
 
+import javax.swing.SwingUtilities;
+
 import mc.lhq.TeamSelector.PlayerData;
 import mc.lhq.TeamSelector.Team;
+import mc.lhq.TeamSelector.TeamSelector;
+import mc.lhq.TeamSelector.UI.SelectorPanel;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,23 +13,43 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class TeamPlayerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event){
 		Player p = event.getPlayer();
-		if(PlayerData.getPlayerData(p)==null){
-			PlayerData pd = new PlayerData(p);
-			PlayerData.playerDatas.add(pd);
+		PlayerData pd = new PlayerData(p);
+		PlayerData.playerDatas.add(pd);
+		addPlayer(p);
+	}
+	private void addPlayer(final Player p) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	SelectorPanel.addPlayer(TeamSelector.nullTeamPanel, p.getName());
+            }
+        });
+	}
+	@EventHandler
+	public void onPlayerLeft(PlayerQuitEvent event){
+		Player p = event.getPlayer();
+		PlayerData pd = PlayerData.getPlayerData(p);
+		if(pd.getTeam()!=null){
+			Team.removeTeam(pd.getTeam(), p);
 		}
+		PlayerData.playerDatas.remove(pd);
+		removePlayer(p);
 	}
 	
+	private void removePlayer(Player p) {
+		SelectorPanel.allRemovePlayer(p.getName());
+	}
 	@EventHandler
 	public void onPlayerDamage(EntityDamageEvent event){
 		if(event.getEntity() instanceof Player){
 			Player p = (Player) event.getEntity();
-			Team t = new PlayerData(p).getTeam();
+			Team t = PlayerData.getPlayerData(p).getTeam();
 			if(t!=null){
 				if(!t.isStart()){
 					event.setCancelled(true);
@@ -60,6 +84,7 @@ public class TeamPlayerListener implements Listener {
 			pd.setDeathPoint(pd.getDeathPoint()+1);
 			team.setTeamDeaths(team.getTeamDeaths()+1);
 		}
+		
 	}
 	
 	public boolean checkTeam(Team team){
