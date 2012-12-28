@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -12,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
+import mc.lhq.TeamSelector.PlayerData;
 import mc.lhq.TeamSelector.Team;
 import mc.lhq.TeamSelector.UI.SelectorPanel;
 import mc.lhq.TeamSelector.UI.Listeners.ButtonListeners;
@@ -149,6 +151,21 @@ public class TeamPanel extends JPanel{
 	}
     public DefaultListModel getListModel() {
         return listModel;
+    }
+    
+    public void reloadRanking(){
+    	if(team!=null){
+    		playerList.clearSelection();
+    		listModel = new DefaultListModel();
+    		List<String> datas = PlayerData.getRankingFromPlayers(team.getPlist());
+    		int u = 0;
+    		while(u!=datas.size()){
+    			listModel.addElement(datas.get(u));
+    			u++;
+    		}
+    		playerList.setModel(listModel);
+    		playerList.repaint();
+    	}
     }
 
 }

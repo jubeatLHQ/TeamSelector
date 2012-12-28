@@ -3,6 +3,7 @@ package mc.lhq.TeamSelector.UI.RankingPanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -49,7 +50,7 @@ public class TeamRankingPanel extends JPanel{
 		JPanel left = new JPanel();
 		listModel = new DefaultListModel();
 		teamList = new TeamList(listModel,this);
-		teamList.setCellRenderer(new TeamListCellRenderer());
+		teamList.setCellRenderer(new RankingTeamListCellRenderer());
 		teamList.setSelectionBackground(Color.black);
 		teamList.addListSelectionListener(new ListListeners());
 		JScrollPane listBar = new JScrollPane(teamList);
@@ -84,6 +85,7 @@ public class TeamRankingPanel extends JPanel{
 		this.add(right);
 		
 		setData(null);
+		reloadRanking();
 	}
 	public void setData(Team t){
 		String kill = "";
@@ -110,6 +112,18 @@ public class TeamRankingPanel extends JPanel{
 		if(lastTeam!=null){
 			setData(lastTeam);
 		}
+	}
+	public void reloadRanking(){
+		teamList.clearSelection();
+		listModel = new DefaultListModel();
+		List<String> datas = Team.getRanking();
+		int u = 0;
+		while(u!=datas.size()){
+			listModel.addElement(datas.get(u));
+			u++;
+		}
+		teamList.setModel(listModel);
+		teamList.repaint();
 	}
 	public void addTeam(Team t){
 		listModel.addElement(t.getName());

@@ -8,8 +8,11 @@ import javax.swing.SwingUtilities;
 
 import org.bukkit.entity.Player;
 
+import mc.lhq.TeamSelector.PlayerData;
 import mc.lhq.TeamSelector.Team;
 import mc.lhq.TeamSelector.TeamSelector;
+import mc.lhq.TeamSelector.UI.Dialog;
+import mc.lhq.TeamSelector.UI.JDialogButton;
 import mc.lhq.TeamSelector.UI.SelectorPanel;
 import mc.lhq.TeamSelector.UI.RankingPanel.TeamButton;
 import mc.lhq.TeamSelector.UI.RankingPanel.TeamRankingPanel;
@@ -33,46 +36,72 @@ public class ButtonListeners implements ActionListener {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							SelectorPanel.changeTeam(tpRoot, tpMove, name);
+							TeamSelector.mainWindow.getSelectorPanel().lookupPlayer(name);
 						}
 					});
-					ListListeners.lastSelected = null;
-					ListListeners.lastUse = null;
-					TeamSelector.mainWindow.getSelectorPanel().getTeamRankingPanel().setData(tpMove.getTeam());
+					Team.reloadRanking();
 				}
 			}else{
-				TeamPanel tp = nb.getPanel();
-				String name = tp.getDefaultName().getText();
+				final TeamPanel tp = nb.getPanel();
+				final String name = tp.getDefaultName().getText();
 				if(name.equalsIgnoreCase("")){
 					return;
 				}
 				if(!SelectorPanel.isEx(name)){
-					Team t = new Team(name);
-					tp.getRoot().getTeamRankingPanel().addTeam(t);
-					tp.removeDefault(tp.getUp());
-					tp.putButtons(tp.getUp(), name,t);
+					TeamSelector.mainWindow.showDialog("["+name+"]を作成します、よろしいですか？", new Runnable(){
+						public void run(){
+							Team t = new Team(name);
+							tp.getRoot().getTeamRankingPanel().addTeam(t);
+							tp.removeDefault(tp.getUp());
+							tp.putButtons(tp.getUp(), name,t);
+						}
+					});
 				}
 			}
 		}else if(event.getSource() instanceof TeamButton){
 			TeamButton tb = (TeamButton) event.getSource();
-			TeamRankingPanel trp = tb.getRoot();
+			final TeamRankingPanel trp = tb.getRoot();
 			String text = tb.getText();
 			if(text.equalsIgnoreCase("reset")){
-				Team t = trp.getTeam();
-				t.setTeamDeaths(0);
-				t.setTeamKills(0);
-				Team.reloadRanking();
+				TeamSelector.mainWindow.showDialog("ステータスをリセットしてよろしいですか？", new Runnable(){
+					public void run(){
+						Team t = trp.getTeam();
+						t.setTeamDeaths(0);
+						t.setTeamKills(0);
+						int u = 0;
+						while(u!=t.getPlist().size()){
+							PlayerData pd = PlayerData.getPlayerData(t.getPlist().get(u));
+							pd.resetPoints();
+							u++;
+						}
+						Team.reloadRanking();
+					}
+				});
 			}else if(text.equalsIgnoreCase("delete")){
-				Team t = trp.getTeam();
-				TeamPanel tp = Team.getPanel(t);
-				final String name = tp.getName();
-				TeamPanel changetp = TeamSelector.nullTeamPanel;
-				List<Player> pl = t.getPlist();
-				while(pl.size()!=0){
-					SelectorPanel.changeTeam(tp, changetp, pl.get(0).getName());
-				}
-				Team.deleteTeam(t);
-				TeamSelector.mainWindow.getSelectorPanel().removeTeamPanel(name,tp);
+				TeamSelector.mainWindow.showDialog("チームを削除してよろしいですか？", new Runnable(){
+					public void run(){
+						Team t = trp.getTeam();
+						TeamPanel tp = Team.getPanel(t);
+						final String name = tp.getName();
+						TeamPanel changetp = TeamSelector.nullTeamPanel;
+						List<Player> pl = t.getPlist();
+						while(pl.size()!=0){
+							SelectorPanel.changeTeam(tp, changetp, pl.get(0).getName());
+						}
+						Team.deleteTeam(t);
+						TeamSelector.mainWindow.getSelectorPanel().removeTeamPanel(name,tp);
+					}
+				});
 			}
+		}else if(event.getSource() instanceof JDialogButton){
+			JDialogButton jdb = (JDialogButton) event.getSource();
+			Dialog dialog = jdb.getDialog();
+			if(jdb.getText().equalsIgnoreCase("yes")){
+				SwingUtilities.invokeLater(dialog.getTask());
+			}
+			dialog.setTask(null);
+			dialog.setTitle("");
+			dialog.setVisible(false);
 		}
 	}
 

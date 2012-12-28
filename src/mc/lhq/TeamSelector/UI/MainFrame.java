@@ -15,6 +15,8 @@ public class MainFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	public JTabbedPane tab;
 	public StatusBar statusBar;
+	
+	public Dialog dialog;
 
 
 	public MainFrame(String name){
@@ -23,9 +25,16 @@ public class MainFrame extends JFrame{
 		this.setTitle(name);
 		this.setSize(990, 615);
 		this.setResizable(false);
-		this.setVisible(true);
 		tab = getAndAddTabBar(this);
 		statusBar = getAndAddStatusBar(this);
+		dialog = new Dialog();
+		dialog.setTitle("");
+	}
+	
+	public void showDialog(String text,Runnable task){
+		dialog.setTitle(text);
+		dialog.setTask(task);
+		dialog.setVisible(true);
 	}
 
 	private void setLookAndFeel(String feel) {

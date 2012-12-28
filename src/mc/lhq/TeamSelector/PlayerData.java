@@ -1,6 +1,7 @@
 package mc.lhq.TeamSelector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.entity.Player;
@@ -54,6 +55,10 @@ public class PlayerData {
 	public void setTeam(Team team){
 		this.team = team;
 	}
+	public void resetPoints(){
+		setKillPoint(0);
+		setDeathPoint(0);
+	}
 	
 	public static PlayerData getPlayerData(Player p){
 		int u = 0;
@@ -66,5 +71,58 @@ public class PlayerData {
 		}
 		return null;
 	}
-
+	public static PlayerData getPlayerData(String name){
+		int u = 0;
+		while(u!=playerDatas.size()){
+			PlayerData pd = playerDatas.get(u);
+			if(pd.getPlayer().getName().equals(name)){
+				return pd;
+			}
+			u++;
+		}
+		return null;
+	}
+	
+	public static List<String> getRanking(){
+		List<String> list = new ArrayList<String>();
+		int u = 0;
+		while(u!=playerDatas.size()){
+			PlayerData pd = playerDatas.get(u);
+			list.add(String.valueOf(100-pd.getKd())+","+pd.getPlayer().getName());
+			u++;
+		}
+		Collections.sort(list);
+		List<String> datas = new ArrayList<String>();
+		int a = 0;
+		while(a!=list.size()){
+			String[] strs = list.get(a).split(",");
+			datas.add(strs[1]);
+			a++;
+		}
+		return datas;
+	}
+	public static List<String> getRankingFromPlayers(List<Player> pl){
+		List<String> list = new ArrayList<String>();
+		int u = 0;
+		while(u!=pl.size()){
+			PlayerData pd = PlayerData.getPlayerData(pl.get(u));
+			list.add(String.valueOf(100-pd.getKd())+","+pd.getPlayer().getName());
+			u++;
+		}
+		Collections.sort(list);
+		List<String> datas = new ArrayList<String>();
+		int a = 0;
+		while(a!=list.size()){
+			String[] strs = list.get(a).split(",");
+			datas.add(strs[1]);
+			a++;
+		}
+		return datas;
+	}
+	public static Player getPlayerOnStatusPanel(){
+		return TeamSelector.mainWindow.getSelectorPanel().getStatusPanel().getPlayer();
+	}
+	public static void reload(){
+		TeamSelector.mainWindow.getSelectorPanel().getStatusPanel().reloadPlayer();
+	}
 }

@@ -1,6 +1,7 @@
 package mc.lhq.TeamSelector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import mc.lhq.TeamSelector.UI.SelectorPanel;
@@ -63,7 +64,6 @@ public class Team {
 	public void onPVP(){
 		int u = 0;
 		while(u!=pl.size()){
-			pl.get(u).sendMessage("test");
 			u++;
 		}
 		this.isStart = true;
@@ -71,7 +71,6 @@ public class Team {
 	public void offPVP(){
 		int u = 0;
 		while(u!=pl.size()){
-			pl.get(u).sendMessage("test");
 			u++;
 		}
 		this.isStart = false;
@@ -109,7 +108,7 @@ public class Team {
 		addTeam(changeT,p);
 	}
 	public static void reloadRanking(){
-		TeamSelector.mainWindow.getSelectorPanel().getTeamRankingPanel().reloadData();
+		TeamSelector.mainWindow.getSelectorPanel().reloadRankings();
 	}
 	public static TeamPanel getPanel(Team team){
 		List<TeamPanel> tpl = SelectorPanel.teamPanelList;
@@ -129,4 +128,22 @@ public class Team {
 		teamList.remove(t);
 	}
 
+	public static List<String> getRanking(){
+		List<String> list = new ArrayList<String>();
+		int u = 0;
+		while(u!=teamList.size()){
+			Team pd = teamList.get(u);
+			list.add(String.valueOf(100-pd.getKd())+","+pd.getName());
+			u++;
+		}
+		Collections.sort(list);
+		List<String> datas = new ArrayList<String>();
+		int a = 0;
+		while(a!=list.size()){
+			String[] strs = list.get(a).split(",");
+			datas.add(strs[1]);
+			a++;
+		}
+		return datas;
+	}
 }

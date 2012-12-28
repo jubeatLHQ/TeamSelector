@@ -14,10 +14,14 @@ import javax.swing.border.BevelBorder;
 
 import org.bukkit.Bukkit;
 
+import mc.lhq.TeamSelector.PlayerData;
 import mc.lhq.TeamSelector.Team;
 import mc.lhq.TeamSelector.TeamSelector;
+import mc.lhq.TeamSelector.UI.Listeners.ListListeners;
 import mc.lhq.TeamSelector.UI.RankingPanel.PlayerRankingPanel;
 import mc.lhq.TeamSelector.UI.RankingPanel.TeamRankingPanel;
+import mc.lhq.TeamSelector.UI.StatusPanel.StatusPanel;
+import mc.lhq.TeamSelector.UI.TeamPanel.PlayerList;
 import mc.lhq.TeamSelector.UI.TeamPanel.TeamPanel;
 
 public class SelectorPanel extends JPanel {
@@ -29,12 +33,19 @@ public class SelectorPanel extends JPanel {
 	
 	private JPanel up;
 	private JPanel down;
+	private JPanel downUp;
+	private JPanel downDown;
 	
 	private TeamRankingPanel teamRankingPanel;
 	private PlayerRankingPanel playerRankingPanel;
+	
+	private StatusPanel statusPanel;
 
 	public TeamRankingPanel getTeamRankingPanel(){
 		return teamRankingPanel;
+	}
+	public StatusPanel getStatusPanel(){
+		return statusPanel;
 	}
 	public SelectorPanel(LayoutManager layout){
 		this.setLayout(layout);
@@ -43,12 +54,20 @@ public class SelectorPanel extends JPanel {
 		up = new JPanel();
 		up.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		tab = getAndAddTabBar(up);
-		down = new JPanel();
-		down.setLayout(new GridLayout(2,2));
-		down.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		createDown(down);
+		down = new JPanel(new GridLayout(2,1));
+		createDownUp();
+		createDownDown();
+		down.add(downUp);
+		down.add(downDown);
 		this.add(up);
 		this.add(down);
+	}
+	private void createDownDown() {
+		downDown = new JPanel();
+		downDown.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		
+		statusPanel = new StatusPanel(this);
+		downDown.add(statusPanel);
 	}
 	public void removeTeamPanel(String name,TeamPanel panel){
 		panel.removeButtons(panel.getUp());
@@ -57,11 +76,14 @@ public class SelectorPanel extends JPanel {
 		teamRankingPanel.getListModel().removeElement(name);
 	}
 	
-	private void createDown(JPanel down2) {
+	private void createDownUp() {
+		downUp = new JPanel();
+		downUp.setLayout(new GridLayout(1,2));
+		downUp.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		teamRankingPanel = new TeamRankingPanel(this);
 		playerRankingPanel = new PlayerRankingPanel(this);
-		down.add(teamRankingPanel);
-		down.add(playerRankingPanel);
+		downUp.add(teamRankingPanel);
+		downUp.add(playerRankingPanel);
 	}
 
 	private JTabbedPane getAndAddTabBar(JPanel selectorPanel) {
@@ -89,6 +111,46 @@ public class SelectorPanel extends JPanel {
 	
 	public List<TeamPanel> getTeamPanels(){
 		return teamPanelList;
+	}
+	public void lookupPlayer(String name){
+		ListListeners.lastSelected = null;
+		ListListeners.lastUse = null;
+		int u = 0;
+		while(u!=teamPanelList.size()){
+			TeamPanel tp = teamPanelList.get(u);
+			PlayerList pl = tp.getPlayerList();
+			pl.clearSelection();
+			int index = tp.getListModel().indexOf(name);
+			if(index!=-1){
+				ListListeners.adjusting = true;
+				pl.setSelectedValue(name, true);
+				ListListeners.adjusting = false;
+				ListListeners.lastUse = pl;
+				ListListeners.lastSelected = name;
+			}
+			u++;
+		}
+		PlayerData pd = PlayerData.getPlayerData(name);
+		if(pd!=null){
+			statusPanel.setPlayer(pd.getPlayer());
+			teamRankingPanel.setData(pd.getTeam());
+			playerRankingPanel.getPlayerList().setSelectedValue(name, true);
+		}else{
+			statusPanel.setPlayer(null);
+			teamRankingPanel.setData(null);
+			playerRankingPanel.getPlayerList().clearSelection();
+		}
+	}
+	
+	public void reloadRankings(){
+		int u = 0;
+		while(u!=teamPanelList.size()){
+			teamPanelList.get(u).reloadRanking();
+			u++;
+		}
+		teamRankingPanel.reloadData();
+		teamRankingPanel.reloadRanking();
+		playerRankingPanel.reloadRanking();
 	}
 	
 	public static HashMap<Object,ImageIcon> onlinePlayers = new HashMap<Object,ImageIcon>();

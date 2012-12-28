@@ -43,6 +43,7 @@ public class TeamSelector extends JavaPlugin{
 		managerMainPanel.addTeamPanel(new TeamPanel(managerMainPanel,false));
 		managerMainPanel.addTeamPanel(new TeamPanel(managerMainPanel,false));
 		managerMainPanel.addTeamPanel(new TeamPanel(managerMainPanel,false));
+		mainWindow.setVisible(true);
 	}
 
 }

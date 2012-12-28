@@ -8,9 +8,12 @@ import mc.lhq.TeamSelector.TeamSelector;
 import mc.lhq.TeamSelector.UI.SelectorPanel;
 
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -49,6 +52,9 @@ public class TeamPlayerListener implements Listener {
 	public void onPlayerDamage(EntityDamageEvent event){
 		if(event.getEntity() instanceof Player){
 			Player p = (Player) event.getEntity();
+			if(PlayerData.getPlayerOnStatusPanel().equals(p)){
+				PlayerData.reload();
+			}
 			Team t = PlayerData.getPlayerData(p).getTeam();
 			if(t!=null){
 				if(!t.isStart()){
@@ -57,7 +63,45 @@ public class TeamPlayerListener implements Listener {
 			}
 		}
 	}
-	
+	@EventHandler
+	public void onFoodLevelChange(FoodLevelChangeEvent event){
+		if(event.getEntity() instanceof Player){
+			Player p = (Player) event.getEntity();
+			if(PlayerData.getPlayerOnStatusPanel().equals(p)){
+				PlayerData.reload();
+			}
+		}
+	}
+	@EventHandler
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
+		if(event.getEntity() instanceof Player){
+			Player deffend = (Player) event.getEntity();
+			PlayerData pd = PlayerData.getPlayerData(deffend);
+			if(pd.getTeam()==null){
+				return;
+			}
+			if(event.getDamager() instanceof Player){
+				Player attack = (Player) event.getDamager();
+				PlayerData apd = PlayerData.getPlayerData(attack);
+				if(apd.getTeam()!=null){
+					if(pd.getTeam().equals(apd.getTeam())){
+						event.setCancelled(true);
+					}
+				}
+			}else if(event.getDamager() instanceof Projectile){
+				Projectile projectile = (Projectile) event.getDamager();
+				if(projectile.getShooter() instanceof Player){
+					Player attack = (Player) projectile.getShooter();
+					PlayerData apd = PlayerData.getPlayerData(attack);
+					if(apd.getTeam()!=null){
+						if(pd.getTeam().equals(apd.getTeam())){
+							event.setCancelled(true);
+						}
+					}
+				}
+			}
+		}
+	}
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event){
 		Player dp = event.getEntity();
@@ -85,6 +129,7 @@ public class TeamPlayerListener implements Listener {
 			team.setTeamDeaths(team.getTeamDeaths()+1);
 		}
 		
+		Team.reloadRanking();
 	}
 	
 	public boolean checkTeam(Team team){
