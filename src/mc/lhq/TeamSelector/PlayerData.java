@@ -134,10 +134,11 @@ public class PlayerData {
 		}
 		return datas;
 	}
-	public static Player getPlayerOnStatusPanel(){
-		return TeamSelector.mainWindow.getSelectorPanel().getStatusPanel().getPlayer();
-	}
 	public static void reload(){
-		TeamSelector.mainWindow.getSelectorPanel().getStatusPanel().reloadPlayer();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run(){
+				TeamSelector.mainWindow.getSelectorPanel().getStatusPanel().reloadPlayer();
+			}
+		});
 	}
 }

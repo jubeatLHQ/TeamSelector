@@ -15,6 +15,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class TeamPlayerListener implements Listener {
 	
@@ -41,12 +42,7 @@ public class TeamPlayerListener implements Listener {
 	public void onPlayerDamage(EntityDamageEvent event){
 		if(event.getEntity() instanceof Player){
 			Player p = (Player) event.getEntity();
-			Player lp = PlayerData.getPlayerOnStatusPanel();
-			if(lp!=null){
-				if(p.equals(lp)){
-					PlayerData.reload();
-				}
-			}
+			PlayerData.reload();
 			Team t = PlayerData.getPlayerData(p).getTeam();
 			if(t!=null){
 				if(!t.isStart()){
@@ -60,6 +56,10 @@ public class TeamPlayerListener implements Listener {
 		if(event.getEntity() instanceof Player){
 			PlayerData.reload();
 		}
+	}
+	@EventHandler
+	public void onRespwn(PlayerRespawnEvent event){
+		PlayerData.reload();
 	}
 	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent event){

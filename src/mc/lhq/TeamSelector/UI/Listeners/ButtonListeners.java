@@ -36,10 +36,11 @@ public class ButtonListeners implements ActionListener {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							SelectorPanel.changeTeam(tpRoot, tpMove, name);
-							TeamSelector.mainWindow.getSelectorPanel().lookupPlayer(name);
+							TeamSelector.mainWindow.getSelectorPanel();
+							SelectorPanel.lookupPlayer(name);
+							Team.reloadRanking();
 						}
 					});
-					Team.reloadRanking();
 				}
 			}else{
 				final TeamPanel tp = nb.getPanel();

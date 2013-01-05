@@ -36,8 +36,8 @@ public class SelectorPanel extends JPanel {
 	private JPanel downUp;
 	private JPanel downDown;
 	
-	private TeamRankingPanel teamRankingPanel;
-	private PlayerRankingPanel playerRankingPanel;
+	private static TeamRankingPanel teamRankingPanel;
+	private static PlayerRankingPanel playerRankingPanel;
 	
 	private static StatusPanel statusPanel;
 
@@ -112,7 +112,7 @@ public class SelectorPanel extends JPanel {
 	public List<TeamPanel> getTeamPanels(){
 		return teamPanelList;
 	}
-	public void lookupPlayer(String name){
+	public static void lookupPlayer(String name){
 		ListListeners.lastSelected = null;
 		ListListeners.lastUse = null;
 		int u = 0;
@@ -132,7 +132,7 @@ public class SelectorPanel extends JPanel {
 		}
 		PlayerData pd = PlayerData.getPlayerData(name);
 		if(pd!=null){
-			statusPanel.setPlayer(pd.getPlayer());
+			statusPanel.setPlayer(name);
 			teamRankingPanel.setData(pd.getTeam());
 			playerRankingPanel.getPlayerList().setSelectedValue(name, true);
 		}else{
@@ -156,7 +156,12 @@ public class SelectorPanel extends JPanel {
 	public static HashMap<Object,ImageIcon> onlinePlayers = new HashMap<Object,ImageIcon>();
 	
 	public static void addPlayer(TeamPanel tp,String name){
-		tp.getListModel().addElement(name);
+		if(tp.getListModel().size()==0){
+			tp.getListModel().addElement(name);
+			lookupPlayer(name);
+		}else{
+			tp.getListModel().addElement(name);
+		}
 		TeamSelector.mainWindow.reloadMemory();
 	}
 	public static void removePlayer(TeamPanel tp,String name){
@@ -170,8 +175,8 @@ public class SelectorPanel extends JPanel {
 			u++;
 		}
 		
-		if(statusPanel.getPlayer()!=null){
-			if(statusPanel.getPlayer().getName().equals(name)){
+		if(statusPanel.getPlayerName()!=null){
+			if(statusPanel.getPlayerName().equals(name)){
 				statusPanel.setPlayer(null);
 			}
 		}

@@ -4,7 +4,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import mc.lhq.TeamSelector.Team;
-import mc.lhq.TeamSelector.TeamSelector;
+import mc.lhq.TeamSelector.UI.SelectorPanel;
 import mc.lhq.TeamSelector.UI.RankingPanel.RankingPlayerList;
 import mc.lhq.TeamSelector.UI.RankingPanel.TeamList;
 import mc.lhq.TeamSelector.UI.TeamPanel.PlayerList;
@@ -30,7 +30,7 @@ public class ListListeners implements ListSelectionListener {
 					return;
 				}
 				String name = (String) jl.getSelectedValue();
-				TeamSelector.mainWindow.selectorPanel.lookupPlayer(name);
+				SelectorPanel.lookupPlayer(name);
 			}
 		}else if(event.getSource() instanceof TeamList){
 			TeamList tl = (TeamList) event.getSource();
@@ -43,7 +43,7 @@ public class ListListeners implements ListSelectionListener {
 				if(list.getSelectedValue()==null){
 					return;
 				}
-				TeamSelector.mainWindow.selectorPanel.lookupPlayer((String)list.getSelectedValue());
+				SelectorPanel.lookupPlayer((String)list.getSelectedValue());
 			}
 		}
 	}

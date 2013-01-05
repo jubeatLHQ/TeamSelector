@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import mc.lhq.TeamSelector.PlayerData;
@@ -48,19 +49,19 @@ public class StatusPanel extends JPanel{
 	private JLabel death;
 	private JLabel kd;
 	
-	private Player player;
+	private String name;
 	
 	public SelectorPanel getRoot(){
 		return root;
 	}
-	public Player getPlayer(){
-		return player;
+	public String getPlayerName(){
+		return name;
 	}
 	public StatusPanel(SelectorPanel root){
 		this.root = root;
 		loadIcons();
 		createPanel();
-		setPlayer(null);
+		setPlayer("");
 	}
 	
 	private void loadIcons() {
@@ -173,9 +174,12 @@ public class StatusPanel extends JPanel{
 		this.add(right);
 	}
 
-	public void setPlayer(Player p){
+	public void setPlayer(String name){
+		Player p = null;
+		if(name!=null){
+			p = Bukkit.getPlayer(name);
+		}
 		if(p!=null){
-			String name = p.getName();
 			PlayerData pd = PlayerData.getPlayerData(p);
 			setIcon(PlayerListCellRenderer.bigIcons.get(name));
 			setPlayerName(name,pd);
@@ -189,11 +193,11 @@ public class StatusPanel extends JPanel{
 			setStamina(0);
 			setData(null);
 		}
-		player = p;
+		this.name = name;
 	}
 	
 	public void reloadPlayer(){
-		setPlayer(player);
+		setPlayer(name);
 	}
 	
 	private void setIcon(Icon playerIcon){
