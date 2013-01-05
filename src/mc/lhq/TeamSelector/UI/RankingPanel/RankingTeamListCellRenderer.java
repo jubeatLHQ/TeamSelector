@@ -33,7 +33,7 @@ public class RankingTeamListCellRenderer implements ListCellRenderer {
         JLabel label = new JLabel(name);
         JLabel label2 = new JLabel(String.valueOf(t.getTeamKills()));
         label2.setForeground(Color.GREEN);
-        JLabel label3 = new JLabel(String.valueOf(t.getTeamKills()));
+        JLabel label3 = new JLabel(String.valueOf(t.getTeamDeaths()));
         label3.setForeground(Color.RED);
         JLabel label4 = new JLabel(String.valueOf(t.getKd())+"%");
         label4.setForeground(Color.YELLOW);

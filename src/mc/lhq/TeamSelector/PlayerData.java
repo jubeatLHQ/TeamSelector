@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
+import mc.lhq.TeamSelector.UI.SelectorPanel;
+
 import org.bukkit.entity.Player;
 
 public class PlayerData {
@@ -59,6 +63,15 @@ public class PlayerData {
 		setKillPoint(0);
 		setDeathPoint(0);
 	}
+	public static void addPlayer(final Player p) {
+		PlayerData pd = new PlayerData(p);
+		PlayerData.playerDatas.add(pd);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	SelectorPanel.addPlayer(TeamSelector.nullTeamPanel, p.getName());
+            }
+        });
+	}
 	
 	public static PlayerData getPlayerData(Player p){
 		int u = 0;
@@ -88,7 +101,9 @@ public class PlayerData {
 		int u = 0;
 		while(u!=playerDatas.size()){
 			PlayerData pd = playerDatas.get(u);
-			list.add(String.valueOf(100-pd.getKd())+","+pd.getPlayer().getName());
+			if(pd.getTeam()!=null){
+				list.add(String.valueOf(100-pd.getKd())+","+pd.getPlayer().getName());
+			}
 			u++;
 		}
 		Collections.sort(list);

@@ -9,6 +9,7 @@ import mc.lhq.TeamSelector.UI.SelectorPanel;
 import mc.lhq.TeamSelector.UI.TeamPanel.TeamPanel;
 
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,6 +31,8 @@ public class TeamSelector extends JavaPlugin{
 	}
 	
 	public void onDisable(){
+		mainWindow.setVisible(false);
+		mainWindow.setEnabled(false);
 	}
 	
 	private void createMainPane() {
@@ -43,6 +46,14 @@ public class TeamSelector extends JavaPlugin{
 		managerMainPanel.addTeamPanel(new TeamPanel(managerMainPanel,false));
 		managerMainPanel.addTeamPanel(new TeamPanel(managerMainPanel,false));
 		managerMainPanel.addTeamPanel(new TeamPanel(managerMainPanel,false));
+		
+		Player[] pls = server.getOnlinePlayers();
+		int u = 0;
+		while(u!=pls.length){
+			PlayerData.addPlayer(pls[u]);
+			u++;
+		}
+		
 		mainWindow.setVisible(true);
 	}
 

@@ -1,10 +1,7 @@
 package mc.lhq.TeamSelector.Listeners;
 
-import javax.swing.SwingUtilities;
-
 import mc.lhq.TeamSelector.PlayerData;
 import mc.lhq.TeamSelector.Team;
-import mc.lhq.TeamSelector.TeamSelector;
 import mc.lhq.TeamSelector.UI.SelectorPanel;
 
 import org.bukkit.entity.Player;
@@ -13,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -23,16 +21,7 @@ public class TeamPlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event){
 		Player p = event.getPlayer();
-		PlayerData pd = new PlayerData(p);
-		PlayerData.playerDatas.add(pd);
-		addPlayer(p);
-	}
-	private void addPlayer(final Player p) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	SelectorPanel.addPlayer(TeamSelector.nullTeamPanel, p.getName());
-            }
-        });
+		PlayerData.addPlayer(p);
 	}
 	@EventHandler
 	public void onPlayerLeft(PlayerQuitEvent event){
@@ -52,8 +41,11 @@ public class TeamPlayerListener implements Listener {
 	public void onPlayerDamage(EntityDamageEvent event){
 		if(event.getEntity() instanceof Player){
 			Player p = (Player) event.getEntity();
-			if(PlayerData.getPlayerOnStatusPanel().equals(p)){
-				PlayerData.reload();
+			Player lp = PlayerData.getPlayerOnStatusPanel();
+			if(lp!=null){
+				if(p.equals(lp)){
+					PlayerData.reload();
+				}
 			}
 			Team t = PlayerData.getPlayerData(p).getTeam();
 			if(t!=null){
@@ -64,12 +56,15 @@ public class TeamPlayerListener implements Listener {
 		}
 	}
 	@EventHandler
+	public void onHeal(EntityRegainHealthEvent event){
+		if(event.getEntity() instanceof Player){
+			PlayerData.reload();
+		}
+	}
+	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent event){
 		if(event.getEntity() instanceof Player){
-			Player p = (Player) event.getEntity();
-			if(PlayerData.getPlayerOnStatusPanel().equals(p)){
-				PlayerData.reload();
-			}
+			PlayerData.reload();
 		}
 	}
 	@EventHandler
@@ -128,7 +123,7 @@ public class TeamPlayerListener implements Listener {
 			pd.setDeathPoint(pd.getDeathPoint()+1);
 			team.setTeamDeaths(team.getTeamDeaths()+1);
 		}
-		
+		PlayerData.reload();
 		Team.reloadRanking();
 	}
 	

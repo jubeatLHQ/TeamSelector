@@ -39,7 +39,7 @@ public class SelectorPanel extends JPanel {
 	private TeamRankingPanel teamRankingPanel;
 	private PlayerRankingPanel playerRankingPanel;
 	
-	private StatusPanel statusPanel;
+	private static StatusPanel statusPanel;
 
 	public TeamRankingPanel getTeamRankingPanel(){
 		return teamRankingPanel;
@@ -168,6 +168,12 @@ public class SelectorPanel extends JPanel {
 		while(u!=teamPanelList.size()){
 			removePlayer(teamPanelList.get(u),name);
 			u++;
+		}
+		
+		if(statusPanel.getPlayer()!=null){
+			if(statusPanel.getPlayer().getName().equals(name)){
+				statusPanel.setPlayer(null);
+			}
 		}
 	}
 	public static void changeTeam(TeamPanel tp,TeamPanel changetp,String name){
